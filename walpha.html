@@ -1,1 +1,246 @@
-/usr/local/ddg/www-static/walpha.html
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html><head>
+
+<link rel="stylesheet" href="/s99.css" type="text/css">
+<style type="text/css">
+body {
+  background-color: #F99D2C !important;
+  font-family: arial;
+  background: none no-repeat fixed left center transparent;
+  background-image: url("http://www.wolframcdn.com/homepage/orange-gears-back.jpg");
+}
+
+pre {
+  background-color:#EEEEEE;
+  font-family:Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+  padding:10px;
+  word-wrap: break-word;
+  font-size: 10pt;
+  white-space: pre-wrap; /* css-3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+}
+
+#t {
+  -moz-border-radius: 20px 20px;
+  border-radius: 20px 20px / 20px 20px;
+}
+</style>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="robots" content="noindex,nofollow"><title>Weinberg|Alpha</title><link title="Duck Duck Go" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml"></head><body><div id="c" style="padding-right:0px;padding-top:50px;padding-bottom:50px;">
+
+<div id="t" style="width: 630px; padding-left:30px; padding-right:30px; background-color:#fff;border:2px #f47f1d solid;">
+
+<a href="/?q=&t=i"><img src="walpha.png" alt="Weinberg Alpha" title="Weinberg Alpha" style="padding-top:0px;padding-bottom:20px;padding-left:115px;"></a>
+
+This page contains open-sourced code that I use to integrate <a href="http://www.wolframalpha.com">WolframAlpha</a> (a knowledge engine) into <a href="http://duckduckgo.com/?t=yegg">DuckDuckGo</a> (a search engine).
+
+<div style="padding-top:15px;"></div>
+This integration consists of the following Perl regular expressions to identify query types that WolframAlpha answers well. These queries then get proxied via the <a href="http://search.cpan.org/~yegg/WWW-WolframAlpha-1.0/lib/WWW/WolframAlpha.pm">WWW::WolframAlpha</a> Perl module, which I also wrote and have open-sourced.
+
+<div style="padding-top:15px;"></div>
+Why <i>Weinberg</i>Alpha? My name is <a href="http://twitter.com/yegg">Gabriel <i>Weinberg</i></a>. It's an homage.
+
+<div style="padding-top:30px;"></div>
+<b>Chemical Formulas</b>
+<div style="padding-top:10px;" class="clu">
+Queries consisting fully of one or more chemical element blocks, e.g. Si4 or O8.
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+$query_with_no_spaces =~ /^(?:(?:\()*(?=[ABCDEFGHIKLMNOPRSTUVWXYZ])(?:S[gnbmreic]?|N[eoabdip]?|G[dae]|B[ariehk]?|U(?:u[ptsohq])?|P[troamdbu]?|M[dgton]|A[ltrmgcus]|I[nr]?|R[bengaufh]|C[rnldumofsae]?|L[ruia]|E[rus]|T[hlacemib]|D[ys]|H[eogsaf]?|F[emr]?|Kr?|Yb?|Z[rn]|Os?|[VW]|Xe)(?:\d|\))*)+$/o
+</pre></code>
+<div style="padding-top:5px;" class="clu">
+<i>Examples</i>
+<ul>
+<li><a href="http://duckduckgo.com/?q=SiO4">Si04</a>
+<li><a href="http://duckduckgo.com/?q=H2O3C5">H2O3C5</a>
+</ul>
+</div>
+
+
+<div style="padding-top:30px;"></div>
+<b>Conversions</b>
+<div style="padding-top:10px;" class="clu">
+Queries with a number, unit, conversion word and conversion target.
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+$query =~ /^(?:convert\s|)[\-\+]?[\d\,\.]+\s*.+\s(?:in|to|in ?to)\s.+$/io
+
+$query =~ /^.+\s?[\-\+]?[\d\,\.]+\s(?:in|to|in ?to)\s.+$/io
+</pre></code>
+<div style="padding-top:5px;" class="clu">
+<i>Examples</i>
+<ul>
+<li><a href="http://duckduckgo.com/?q=60mph+in+kph">60mph in kph</a>
+<li><a href="http://duckduckgo.com/?q=USD+5+in+CAD">USD 5 in CAD</a>
+</ul>
+</div>
+
+<div style="padding-top:30px;"></div>
+<b>General Answers</b>
+<div style="padding-top:10px;" class="clu">
+Queries starting/ending with keywords WA answers well.
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+$query =~ /^(?:mass|radius|density|distance|elevation|population|age|(?:birth|death)\s?(?:year|date)|weight|sun(?:rise|set)|calories)\s+.*$/io
+
+$query =~ /^.*\s+(?:mass|radius|density|distance|elevation|population|age|(?:birth|death)\s?(?:year|date)|weight|sun(?:rise|set)|calories)$/io
+</pre></code>
+<div style="padding-top:5px;" class="clu">
+<i>Examples</i>
+<ul>
+<li><a href="http://duckduckgo.com/?q=age+of+obama">age of obama</a>
+<li><a href="http://duckduckgo.com/?q=moon+mass">moon mass</a>
+</ul>
+</div>
+
+
+<div style="padding-top:30px;"></div>
+<b>Holidays</b>
+<div style="padding-top:10px;" class="clu">
+Queries matching holiday names (using a lower case and punctuation free version of $query).
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+my %holidays = (
+    'mlk day' => undef,
+    'martin luther king day' => undef,
+    'martin luther kings birthday' => undef,
+    'presidents day' => undef,
+    'washingtons birthday' => undef,
+    'memorial day' => undef,
+    'independence day' => undef,
+    'labor day' => undef,
+    'columbus day' => undef,
+    'veterans day' => undef,
+    'thanksgiving' => undef,
+    'fathers day' => undef,
+    'mothers day' => undef,
+    'inauguration day' => undef,
+    'ash wednesday' => undef,
+    'shrove tuesday' => undef,
+    'groundhog day' => undef,
+    'saint patricks day' => undef,
+    'easter' => undef,
+    'earth day' => undef,
+    'arbor day' => undef,
+    'cinco de mayo' => undef,
+    'st patricks day' => undef,
+    'flag day' => undef,
+    'rosh hashanah' => undef,
+    'yom kippur' => undef,
+    'halloween' => undef,
+    'election day' => undef,
+    'hanukkah' => undef,
+    );
+
+exists $holidays{$query}
+
+($query =~ /^(?:date\s|day\s|\d{4}\s)+(?:of\s|)(.*)$/o 
+|| $query =~ /^(.*)\s(?:date|day|\d{4})$/o) 
+&& exists $holidays{$1}
+</pre></code>
+<div style="padding-top:5px;" class="clu">
+<i>Examples</i>
+<ul>
+<li><a href="http://duckduckgo.com/?q=fathers+day+2011">fathers day 2011</a>
+<li><a href="http://duckduckgo.com/?q=election+day">election day</a>
+</ul>
+</div>
+
+
+<div style="padding-top:30px;"></div>
+<b>Math</b>
+<div style="padding-top:10px;" class="clu">
+Queries with complicated math (I do simple calcs myself).
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+$query =~ /^\d+\!$/o # factorial
+
+$query =~ /(?:\d|\b(?:pi|x|e)\b)/o && $query =~ /\b(?:sqrt|sin|cos|tan|sec|csc|cot|arcsin|arccis|arctan|arccsc|sinh|mod|cosh|tanh|csch|arsinh|arccsch|ln|log|lg|exp|int|choose|integral|integrate|sum|derivative)\b/io
+</pre></code>
+<div style="padding-top:5px;" class="clu">
+<i>Examples</i>
+<ul>
+<li><a href="http://duckduckgo.com/?q=9!">9!</a>
+<li><a href="http://duckduckgo.com/?q=arcsin(1)">arcsin(1)</a>
+</ul>
+</div>
+
+
+<div style="padding-top:30px;"></div>
+<b>Time</b>
+<div style="padding-top:10px;" class="clu">
+Queries about time.
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+$query =~ /^(?:current\s|what\s|)(?:time|clock)\s/io
+
+$query =~ /\s(?:current\s|what\s|)(?:time|clock)$/io
+</pre></code>
+<div style="padding-top:5px;" class="clu">
+<i>Examples</i>
+<ul>
+<li><a href="http://duckduckgo.com/?q=time+in+philly">time in philly</a>
+<li><a href="http://duckduckgo.com/?q=boston+to+philly+time">boston to philly time</a>
+</ul>
+</div>
+
+
+<div style="padding-top:30px;"></div>
+<b>Notes</b>
+<div style="padding-top:5px;" class="clu">
+<ul>
+<li>You can <a href="http://duckduckgo.com/?q=regexp+/(.*%3F)+(.*%3F)+(.*)/+duck+duck+go">test regexp</a> using DuckDuckGo. Also note the <a href="http://www.perl.com/doc/manual/html/pod/perlre.html">perlre man page</a>.
+<li>The background on this page is &copy; Wolfram Alpha LLC.
+<li>Here's the license  (<a href="http://en.wikipedia.org/wiki/MIT_License">MIT</a>) for the above software:
+</ul>
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+ Copyright (c) 2010 Duck Duck Go, Inc.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+</pre></code>
+
+
+<div style="padding-top:30px;"></div>
+Here are some areas where I could use some help:
+<ul>
+<li>New categories (where WA <a href="http://www.wolframalpha.com/examples/">has useful info</a> in the search context).
+<li>False positives, i.e. reduce current regexp where appropriate.
+<li>False negatives, i.e. expand current regexp where appropriate.
+<li>Ideas on which pieces of info to show from WA and how to format them.
+</ul>
+<div style="padding-top:5px;"></div>
+If you think of anything, please <a href="https://duckduckgo.com/feedback.html">let me know</a>. 
+
+
+
+<div style="padding-top:30px;"></div>
+
+</div>
+</div>
+</body>
+</html>
