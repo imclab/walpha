@@ -161,7 +161,7 @@ Queries with complicated math (I do simple calcs myself).
 <code><pre>
 $query =~ /^\d+\!$/o # factorial
 
-$query =~ /(?:\d|\b(?:pi|x|e)\b)/o && $query =~ /\b(?:sqrt|sin|cos|tan|sec|csc|cot|arcsin|arccis|arctan|arccsc|sinh|mod|cosh|tanh|csch|arsinh|arccsch|ln|log|lg|exp|int|choose|integral|integrate|sum|derivative|\% of)\b/io
+$query =~ /(?:\d|\b(?:pi|[xX]|e)\b)/o && $query =~ /\b(?:sqrt|sin|cos|tan|sec|csc|cot|arcsin|arccis|arctan|arccsc|sinh|mod|cosh|tanh|csch|arsinh|arccsch|ln|log|lg|exp|int|choose|integral|integrate|sum|derivative|\% of|=)\b/io
 </pre></code>
 <div style="padding-top:5px;" class="clu">
 <i>Examples</i>
