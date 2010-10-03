@@ -105,43 +105,43 @@ Queries matching holiday names (using a lower case and punctuation free version 
 </div>
 <div style="padding-top:10px;"></div>
 <code><pre>
-my %holidays = (
-    'mlk day' => undef,
-    'martin luther king day' => undef,
-    'martin luther kings birthday' => undef,
-    'presidents day' => undef,
-    'washingtons birthday' => undef,
-    'memorial day' => undef,
-    'independence day' => undef,
-    'labor day' => undef,
-    'columbus day' => undef,
-    'veterans day' => undef,
-    'thanksgiving' => undef,
-    'fathers day' => undef,
-    'mothers day' => undef,
-    'inauguration day' => undef,
-    'ash wednesday' => undef,
-    'shrove tuesday' => undef,
-    'groundhog day' => undef,
-    'saint patricks day' => undef,
-    'easter' => undef,
-    'earth day' => undef,
-    'arbor day' => undef,
-    'cinco de mayo' => undef,
-    'st patricks day' => undef,
-    'flag day' => undef,
-    'rosh hashanah' => undef,
-    'yom kippur' => undef,
-    'halloween' => undef,
-    'election day' => undef,
-    'hanukkah' => undef,
-    );
+my %holidays = map { $_ => undef } (
+    'mlk day',
+    'martin luther king day',
+    'martin luther kings birthday',
+    'presidents day',
+    'washingtons birthday',
+    'memorial day',
+    'independence day',
+    'labor day',
+    'columbus day',
+    'veterans day',
+    'thanksgiving',
+    'fathers day',
+    'mothers day',
+    'inauguration day',
+    'ash wednesday',
+    'shrove tuesday',
+    'groundhog day',
+    'saint patricks day',
+    'easter',
+    'earth day',
+    'arbor day',
+    'cinco de mayo',
+    'st patricks day',
+    'flag day',
+    'rosh hashanah',
+    'yom kippur',
+    'halloween',
+    'election day',
+    'hanukkah',
+);
 
 exists $holidays{$query}
 
-($query =~ /^(?:date\s|day\s|\d{4}\s)+(?:of\s|)(.*)$/o 
-|| $query =~ /^(.*)\s(?:date|day|\d{4})$/o) 
-&& exists $holidays{$1}
+($query =~ /^(?:date\s|day\s|\d{4}\s)+(?:of\s|)(.*)$/
+|| $query =~ /^(.*)\s(?:date|day|\d{4})$/o) &&
+   exists $holidays{$1}
 </pre></code>
 <div style="padding-top:5px;" class="clu">
 <i>Examples</i>
