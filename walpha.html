@@ -66,9 +66,12 @@ Queries with a number, unit, conversion word and conversion target.
 </div>
 <div style="padding-top:10px;"></div>
 <code><pre>
-$query =~ /^(?:convert\s|)[\-\+]?[\d\,\.]+\s*.+\s(?:in|to|in ?to)\s.+$/io
+$query =~ /^!?(?:convert\s|)[\-\+]?[\d\,\.]+\s?.{1,10}\s+(?:\-|in|to|in ?to)\s.{1,10}$/io
 
-$query =~ /^.+\s?[\-\+]?[\d\,\.]+\s(?:in|to|in ?to)\s.+$/io
+$query =~ /^.{1,10}\s*[\-\+]?[\d\,\.]+\s(?:in|to|in ?to)\s.{1,10}$/io
+
+$q_escape =~ s/(\b|\%20)cad(\b|\%20)/$1canadian dollars$2/io;
+$q_escape =~ s/(\b|\%20)jst(\b|\%20)/$1jt$2/io;
 </pre></code>
 <div style="padding-top:5px;" class="clu">
 <i>Examples</i>
@@ -78,6 +81,33 @@ $query =~ /^.+\s?[\-\+]?[\d\,\.]+\s(?:in|to|in ?to)\s.+$/io
 </ul>
 </div>
 
+
+<div style="padding-top:30px;"></div>
+<b>Dates</b>
+<div style="padding-top:10px;" class="clu">
+Enter a date and get the day of week.
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+if (my ($ss,$mm,$hh,$day,$month,$year,$zone) = strptime($query)) {
+  if (!$year) {
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+    localtime(time);
+    $year = $year + 1900;
+    $year += 1 if $month<$mon || ($month==$mon && $day<$mday);
+    $q_escape .= qq(+$year);
+  }
+}
+</pre></code>
+<div style="padding-top:5px;" class="clu">
+<i>Examples</i>
+<ul>
+<li><a href="http://duckduckgo.com/?q=Jan+1+1990">Jan 1 1990</a>
+<li><a href="http://duckduckgo.com/?q=Dec 15">Dec 15</a>
+</ul>
+</div>
+
+
 <div style="padding-top:30px;"></div>
 <b>General Answers</b>
 <div style="padding-top:10px;" class="clu">
@@ -85,7 +115,7 @@ Queries starting/ending with keywords WA answers well.
 </div>
 <div style="padding-top:10px;"></div>
 <code><pre>
-$query =~ /^(?:mass|radius|density|distance|elevation|population|age|(?:birth|death)\s?(?:year|date)|weight|sun(?:rise|set)|calories)\s+.*$/io
+$query =~ /^!?(?:number of|height of|volume of|area of|mass|radius|density|distance|elevation|population|age|(?:birth|death)\s?(?:year|date)|weight|sun(?:rise|set)|calories)\s+.*$/io
 
 $query =~ /^.*\s+(?:mass|radius|density|distance|elevation|population|age|(?:birth|death)\s?(?:year|date)|weight|sun(?:rise|set)|calories)$/io
 </pre></code>
@@ -135,12 +165,14 @@ my %holidays = map { $_ => undef } (
     'halloween',
     'election day',
     'hanukkah',
+    'christmas',
+    'christmas day',
 );
 
 exists $holidays{$query}
 
-($query =~ /^(?:date\s|day\s|\d{4}\s)+(?:of\s|)(.*)$/
-|| $query =~ /^(.*)\s(?:date|day|\d{4})$/o) &&
+($query =~ /^!?(?:date\s|day\s|\d{4}\s|\d{2}\s)+(?:of\s|)(.*)\??$/
+|| $query =~ /^!?(?:(?:when|what) is |(?:how many |)days (?:to |till |until? |for |of )|)(.*?)(?: date| day| \d{4}| \d{2})*\??$/ &&
    exists $holidays{$1}
 </pre></code>
 <div style="padding-top:5px;" class="clu">
@@ -161,7 +193,11 @@ Queries with complicated math (I do simple calcs myself).
 <code><pre>
 $query =~ /^\d+\!$/o # factorial
 
-$query =~ /(?:\d|\b(?:pi|[xX]|e)\b)/o && $query =~ /\b(?:sqrt|sin|cos|tan|sec|csc|cot|arcsin|arccis|arctan|arccsc|sinh|mod|cosh|tanh|csch|arsinh|arccsch|ln|log|lg|exp|int|choose|integral|integrate|sum|derivative|\% of|=)\b/io
+$query =~ /^\(?\d+[a-z]+\s*[\^\-\*\(\)\+\/]\s*\d+[a-z]+/o 
+
+$query =~ /^[xX\^\-\*\(\)\+\/\s\d]+$/o && $query !~ /^\d+$/o
+
+$query =~ /(?:\d|\b(?:pi|[xX]|e)\b)/o && $query =~ /(?:\b(?:pi|sqrt|sin|cos|tan|sec|csc|cot|arcsin|arccis|arctan|arccsc|sinh|mod|cosh|tanh|csch|arsinh|arccsch|ln|log|lg|exp|int|choose|integral|integrate|sum|derivative)\b|\% of|=)/io
 </pre></code>
 <div style="padding-top:5px;" class="clu">
 <i>Examples</i>
@@ -173,15 +209,38 @@ $query =~ /(?:\d|\b(?:pi|[xX]|e)\b)/o && $query =~ /\b(?:sqrt|sin|cos|tan|sec|cs
 
 
 <div style="padding-top:30px;"></div>
+<b>Stocks</b>
+<div style="padding-top:10px;" class="clu">
+Ticker quotes.
+</div>
+<div style="padding-top:10px;"></div>
+<code><pre>
+exists $stocks{lc $query}
+</pre></code>
+<div style="padding-top:5px;" class="clu">
+<i>Examples</i>
+<ul>
+<li><a href="http://duckduckgo.com/?q=msft">msft</a>
+</ul>
+</div>
+
+
+<div style="padding-top:30px;"></div>
 <b>Time</b>
 <div style="padding-top:10px;" class="clu">
 Queries about time.
 </div>
 <div style="padding-top:10px;"></div>
 <code><pre>
-$query =~ /^(?:current\s|what\s|)(?:time|clock)\s/io
+$query =~ /^!?(?:current\s|what\s|)(?:time|clock)\s/io
 
 $query =~ /\s(?:current\s|what\s|)(?:time|clock)$/io
+
+$query =~ /^!?(?:what is|what\'s|)\s*(?:today\'?s|)\s*date\s*(?:today|)$/io
+
+$query =~ /^!?\d{1,2}\:?\d{0,2}[ap]\.?m\.?(?:\s|\Z)/io
+
+$q_escape =~ s/clock/time/io;
 </pre></code>
 <div style="padding-top:5px;" class="clu">
 <i>Examples</i>
