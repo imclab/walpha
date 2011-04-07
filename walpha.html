@@ -26,18 +26,17 @@ pre {
 }
 </style>
 
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="robots" content="index,follow"><title>Weinberg|Alpha</title></head><body><div id="c" style="padding-right:0px;padding-top:50px;padding-bottom:50px;">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="robots" content="index,follow"><title>DuckDuckGo + Wolfram|Alpha</title></head><body><div id="c" style="padding-right:0px;padding-top:50px;padding-bottom:50px;">
 
 <div id="t" style="width: 630px; padding-left:30px; padding-right:30px; background-color:#fff;border:2px #f47f1d solid;">
 
-<!--<a href="/?q=&t=i"><img src="walpha.png" alt="Weinberg Alpha" title="Weinberg Alpha" style="padding-top:0px;padding-bottom:20px;padding-left:0px;"></a>//-->
-<div style="font-size:20pt">WeinbergAlpha</div>
+<div style="font-size:20pt">DuckDuckGo + Wolfram|Alpha</div>
 
 <div style="padding-top:15px;"></div>
-This page contains open-sourced code that I use to integrate <a href="http://www.wolframalpha.com">WolframAlpha</a> (a knowledge engine) into <a href="http://duckduckgo.com/?t=yegg">DuckDuckGo</a> (a search engine). It is also <a href="https://github.com/duckduckgo/walpha">on github</a>.
+This page contains open-sourced code that we use to integrate <a href="http://www.wolframalpha.com">WolframAlpha</a> (a knowledge engine) into <a href="http://duckduckgo.com/?t=yegg">DuckDuckGo</a> (a search engine). It is also <a href="https://github.com/duckduckgo/walpha">on github</a>.
 
 <div style="padding-top:15px;"></div>
-This integration consists of the following Perl regular expressions to identify query types that WolframAlpha answers well. These queries then get proxied via the WWW::WolframAlpha Perl module, which I also wrote and is <a href="http://search.cpan.org/search?query=WWW%3AWolframAlpha&mode=all">open-source on CPAN</a>.
+This integration consists of the following Perl regular expressions to identify query types that WolframAlpha answers well. These queries then get proxied via the WWW::WolframAlpha Perl module, which we also maintain <a href="http://search.cpan.org/search?query=WWW%3AWolframAlpha&mode=all">on CPAN</a>.
 
 <div style="padding-top:30px;"></div>
 <i>Some variables used</i>
@@ -387,7 +386,6 @@ $q_escape .= '+time' if $q_escape !~ /time$/i;
 <div style="padding-top:5px;" class="clu">
 <ul>
 <li>You can <a href="http://duckduckgo.com/?q=regexp+/(.*%3F)+(.*%3F)+(.*)/+duck+duck+go">test regexp</a> using DuckDuckGo. Also note the <a href="http://www.perl.com/doc/manual/html/pod/perlre.html">perlre man page</a>.
-<li>The background on this page is &copy; Wolfram Alpha LLC.
 <li>Here's the license  (<a href="http://en.wikipedia.org/wiki/MIT_License">MIT</a>) for the above software:
 </ul>
 </div>
@@ -425,9 +423,6 @@ Here are some areas where I could use some help:
 </ul>
 <div style="padding-top:5px;"></div>
 If you think of anything, please <a href="https://duckduckgo.com/feedback.html">let me know</a>. 
-
-<div style="padding-top:15px;"></div>
-Why <i>Weinberg</i>Alpha? My name is <a href="http://twitter.com/yegg">Gabriel <i>Weinberg</i></a>. It's an homage.
 
 <div style="padding-top:30px;"></div>
 
